@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const generateToken = require("../config/generateToken");
 
 const registerUser = async (req, res) => {
   const { name, email, password, confPassword, pic } = req.body;
@@ -28,6 +29,7 @@ const registerUser = async (req, res) => {
       name: newUser.name,
       email: newUser.email,
       pic: newUser.pic,
+      token: generateToken(newUser._id),
     });
   } else {
     res.status(400);
