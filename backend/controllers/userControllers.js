@@ -51,7 +51,7 @@ const loginUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(401).send("");
+    res.status(401);
     throw new Error("Invalid Email Or Password");
   }
 };

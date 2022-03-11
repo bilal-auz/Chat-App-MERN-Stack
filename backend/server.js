@@ -3,9 +3,9 @@ const connect_db = require("./config/db");
 const dotenv = require("dotenv");
 const chats = require("./data/data");
 require("express-async-errors");
+
 // Routes
 const userRoutes = require("./routes/userRoutes");
-
 // Middlewares
 const { errorHandler, notFound } = require("./middlewares/errorMiddleware");
 

@@ -96,7 +96,7 @@ function Register() {
     }
 
     try {
-      const options = {
+      const config = {
         headers: {
           "Content-type": "application/json",
         },
@@ -105,7 +105,7 @@ function Register() {
       const res_data = await axios.post(
         "/api/user",
         { name, email, password, pic },
-        options
+        config
       );
 
       toast({
