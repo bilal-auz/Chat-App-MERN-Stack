@@ -6,6 +6,7 @@ require("express-async-errors");
 
 // Routes
 const userRoutes = require("./routes/userRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 // Middlewares
 const { errorHandler, notFound } = require("./middlewares/errorMiddleware");
 
@@ -21,6 +22,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user", userRoutes);
+
+app.use("/api/chat", chatRoutes);
 
 // Error handlers middelwares
 app.use(notFound);
