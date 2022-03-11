@@ -4,8 +4,8 @@ const generateToken = require("../config/generateToken");
 const registerUser = async (req, res) => {
   const { name, email, password, confPassword, pic } = req.body;
 
-  if (!name || !email || !password || !confPassword) {
-    res.status(400);
+  if (!name || !email || !password) {
+    res.status(400).send("");
     throw new Error("Fill all fields");
   }
 
@@ -32,7 +32,7 @@ const registerUser = async (req, res) => {
       token: generateToken(newUser._id),
     });
   } else {
-    res.status(400);
+    res.status(400).send("");
     throw new Error("Error occur while creating user, Please try again");
   }
 };
@@ -51,7 +51,7 @@ const loginUser = async (req, res) => {
       token: generateToken(user._id),
     });
   } else {
-    res.status(401).end();
+    res.status(401).send("");
     throw new Error("Invalid Email Or Password");
   }
 };

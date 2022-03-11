@@ -36,8 +36,12 @@ function Login() {
           </InputRightElement>
         </InputGroup>
       </FormControl>
-      <Button onClick={submitHandler}>Login</Button>
+      <Button width="100%" colorScheme="blue" onClick={submitHandler}>
+        Login
+      </Button>
       <Button
+        width="100%"
+        colorScheme="whatsapp"
         onClick={() => {
           setEmail("Hello");
           setPassword("PILAL");
