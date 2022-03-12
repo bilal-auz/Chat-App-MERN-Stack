@@ -52,8 +52,9 @@ const accessChat = async (req, res) => {
 
 const fetchChats = async (req, res) => {
   try {
+    // res.send(req.user);
     const chats = await Chat.find({
-      user: { $elemMatch: { $eq: req.user._id } },
+      users: { $elemMatch: { $eq: req.user._id } },
     })
       .populate("users", "-password")
       .populate("latestMessage")
