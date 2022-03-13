@@ -62,15 +62,11 @@ function MyChats() {
         alignItems="center"
       >
         My Chats
-        {/* <GroupChatModal>
-          <Button
-            d="flex"
-            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
-            rightIcon="+"
-          >
+        <GroupChatModal>
+          <Button d="flex" fontSize={{ base: "17px", md: "10px", lg: "17px" }}>
             New Group Chat
           </Button>
-        </GroupChatModal> */}
+        </GroupChatModal>
       </Box>
       <Box
         d="flex"

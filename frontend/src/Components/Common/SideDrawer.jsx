@@ -139,7 +139,7 @@ const SideDrawer = () => {
             <MenuButton p={1}>Notifications</MenuButton>
           </Menu>
           <Menu>
-            <MenuButton as={Button} righIcon={"X"}>
+            <MenuButton as={Button} righicon={"X"}>
               <Avatar
                 size="sm"
                 cursor="pointer"
