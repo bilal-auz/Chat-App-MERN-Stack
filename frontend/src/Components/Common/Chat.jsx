@@ -25,7 +25,21 @@ function Chat({ fetchAgain, setFetchAgain }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    console.log("hello");
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connection", () => setSocketConnected(true));
+
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stopTyping", () => setIsTyping(false));
+  }, []);
+
   const sendMessage = async (event) => {
+    console.log("not enter");
     if (event.key === "Enter" && newMessage) {
       try {
         const config = {
@@ -39,19 +53,18 @@ function Chat({ fetchAgain, setFetchAgain }) {
           chatId: selectedChat._id,
           content: newMessage,
         };
-        const data = await axios.post("/api/message", body, config);
+        const { data } = await axios.post("/api/message", body, config);
+
+        setMessages([...messages, data]);
+
+        socket.emit("new message", data);
+
         setNewMessage("");
       } catch (error) {
         console.log(error);
       }
     }
   };
-
-  useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit("setup", user);
-    socket.on("connection", () => setSocketConnected(true));
-  }, []);
 
   const getMessages = async () => {
     console.log(selectedChat);
@@ -62,12 +75,12 @@ function Chat({ fetchAgain, setFetchAgain }) {
       },
     };
 
-    const { data: getMessages } = await axios.get(
+    const { data } = await axios.get(
       `/api/message/${selectedChat._id}`,
       config
     );
 
-    setMessages(getMessages);
+    setMessages(data);
 
     socket.emit("join chat", selectedChat._id);
     // console.log(getMessages);
@@ -79,8 +92,28 @@ function Chat({ fetchAgain, setFetchAgain }) {
     selectedChatCompare = selectedChat;
   }, [selectedChat]);
 
+  useEffect(() => {
+    socket.on("message recieved", (newMessageRecieved) => {
+      if (
+        !selectedChatCompare ||
+        selectedChatCompare._id !== newMessageRecieved.chat._id
+      ) {
+        //notify
+      } else {
+        setMessages([...messages, newMessageRecieved]);
+      }
+    });
+  });
+
   const typingHandler = async (e) => {
     setNewMessage(e.target.value);
+
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
   };
 
   return (
