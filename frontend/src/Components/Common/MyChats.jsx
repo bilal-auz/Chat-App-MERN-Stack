@@ -7,7 +7,7 @@ import ChatLoading from "./ChatLoading";
 import GroupChatModal from "./GroupChatModal";
 import { getSenderName } from "../../config/chatLogics";
 
-function MyChats() {
+function MyChats({ fetchAgain }) {
   const [loggedUser, setLoggedUser] = useState();
   const { selectedChat, setSelectedChat, user, chats, setChats } = ChatState();
 
@@ -39,7 +39,7 @@ function MyChats() {
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
-  }, []);
+  }, [fetchAgain]);
   return (
     <Box
       d={{ base: selectedChat ? "none" : "flex", md: "flex" }}

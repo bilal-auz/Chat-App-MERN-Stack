@@ -12,14 +12,62 @@ import ProfileModel from "./ProfileModel";
 import { ChatState } from "./../../Context/ChatProvider";
 import { getSenderName, getSenderProfile } from "../../config/chatLogics";
 import UpdateGroupChatModal from "./UpdateGroupChatModal";
+import ScrollableChat from "./ScrollableChat";
+import axios from "axios";
 
-function Chat({ fetchMessages, fetchAgain, setFetchAgain }) {
+function Chat({ fetchAgain, setFetchAgain }) {
   const { user, selectedChat, setSelectedChat } = ChatState();
-  const { loading, setLoading } = useState(false);
-  //   const { messages, setMessages } = useState();
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
 
-  //   {console.log("ssss")}
+  const sendMessage = async (event) => {
+    if (event.key === "Enter" && newMessage) {
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
 
+        const body = {
+          chatId: selectedChat._id,
+          content: newMessage,
+        };
+        const data = await axios.post("/api/message", body, config);
+        setNewMessage("");
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+  const getMessages = async () => {
+    console.log(selectedChat);
+    const config = {
+      headers: {
+        "Content-type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      },
+    };
+
+    const { data: getMessages } = await axios.get(
+      `/api/message/${selectedChat._id}`,
+      config
+    );
+
+    setMessages(getMessages);
+    // console.log(getMessages);
+  };
+
+  const typingHandler = async (e) => {
+    setNewMessage(e.target.value);
+  };
+
+  useEffect(() => {
+    getMessages();
+  }, [selectedChat]);
   return (
     <>
       {selectedChat ? (
@@ -42,7 +90,7 @@ function Chat({ fetchMessages, fetchAgain, setFetchAgain }) {
               Back
             </Button>
 
-            {true &&
+            {messages &&
               (!selectedChat.isGroupChat ? (
                 <>
                   {getSenderName(user, selectedChat.users)}
@@ -56,7 +104,7 @@ function Chat({ fetchMessages, fetchAgain, setFetchAgain }) {
                 <>
                   {selectedChat.chatName.toUpperCase()}
                   <UpdateGroupChatModal
-                    fetchMessages={fetchMessages}
+                    fetchMessages={getMessages}
                     fetchAgain={fetchAgain}
                     setFetchAgain={setFetchAgain}
                   >
@@ -65,7 +113,7 @@ function Chat({ fetchMessages, fetchAgain, setFetchAgain }) {
                 </>
               ))}
           </Text>
-          {/* <Box
+          <Box
             d="flex"
             flexDir="column"
             justifyContent="flex-end"
@@ -89,34 +137,35 @@ function Chat({ fetchMessages, fetchAgain, setFetchAgain }) {
                 <ScrollableChat messages={messages} />
               </div>
             )}
-
-            <FormControl
-              onKeyDown={sendMessage}
-              id="first-name"
-              isRequired
-              mt={3}
-            >
-              {istyping ? (
-                <div>
-                  <Lottie
-                    options={defaultOptions}
-                    // height={50}
-                    width={70}
-                    style={{ marginBottom: 15, marginLeft: 0 }}
-                  />
-                </div>
-              ) : (
-                <></>
-              )}
-              <Input
-                variant="filled"
-                bg="#E0E0E0"
-                placeholder="Enter a message.."
-                value={newMessage}
-                onChange={typingHandler}
-              />
-            </FormControl>
-          </Box> */}
+            {
+              <FormControl
+                onKeyDown={sendMessage}
+                id="first-name"
+                isRequired
+                mt={3}
+              >
+                {false ? (
+                  <div>
+                    {/* <Lottie
+                      options={defaultOptions}
+                      // height={50}
+                      width={70}
+                      style={{ marginBottom: 15, marginLeft: 0 }}
+                    /> */}
+                  </div>
+                ) : (
+                  <></>
+                )}
+                <Input
+                  variant="filled"
+                  bg="#E0E0E0"
+                  placeholder="Enter a message.."
+                  value={newMessage}
+                  onChange={typingHandler}
+                />
+              </FormControl>
+            }
+          </Box>
         </>
       ) : (
         // to get socket.io on same page

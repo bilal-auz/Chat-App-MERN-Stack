@@ -65,7 +65,8 @@ function UpdateGroupChatModal({
     };
 
     const { data } = await axios.put("/api/chat/removefromgroup", body, config);
-
+    setFetchAgain(!fetchAgain);
+    fetchMessages();
     toast({
       title: "User Removed",
       status: "success",
@@ -102,6 +103,7 @@ function UpdateGroupChatModal({
     const { data } = await axios.put("/api/chat/renamegroupchat", body, config);
 
     setSelectedChat(data);
+    setFetchAgain(!fetchAgain);
   };
 
   const handleSearch = async (searchKeyword) => {
@@ -159,6 +161,7 @@ function UpdateGroupChatModal({
     const { data } = await axios.put("/api/chat/addtogroup", body, config);
 
     setSelectedChat(data);
+    setFetchAgain(!fetchAgain);
 
     toast({
       title: "User added",
