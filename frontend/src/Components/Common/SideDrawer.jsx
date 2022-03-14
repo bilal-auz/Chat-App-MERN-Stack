@@ -148,7 +148,7 @@ const SideDrawer = () => {
               ></Avatar>
             </MenuButton>
             <MenuList>
-              <ProfileModel>
+              <ProfileModel user>
                 <MenuItem>My Profile</MenuItem>
               </ProfileModel>
               <MenuItem onClick={logoutHandler}>Logout</MenuItem>

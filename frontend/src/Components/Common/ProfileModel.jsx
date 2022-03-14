@@ -15,8 +15,8 @@ import React from "react";
 import { ChatState } from "./../../Context/ChatProvider";
 import { useHistory } from "react-router";
 
-function ProfileModel({ children }) {
-  const { user } = ChatState();
+function ProfileModel({ children, user }) {
+  // const { user } = ChatState();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
