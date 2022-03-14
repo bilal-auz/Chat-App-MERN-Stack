@@ -53,12 +53,17 @@ const accessChat = async (req, res) => {
 const fetchChats = async (req, res) => {
   try {
     // res.send(req.user);
-    const chats = await Chat.find({
+    var chats = await Chat.find({
       users: { $elemMatch: { $eq: req.user._id } },
     })
       .populate("users", "-password")
-      .populate("latestMessage")
-      .populate("groupAdmin", "-password");
+      .populate("groupAdmin", "-password")
+      .populate("latestMessage");
+
+    chats = await User.populate(chats, {
+      path: "latestMessage.sender",
+      select: "name pic email",
+    });
 
     res.send(chats);
   } catch (error) {
@@ -69,7 +74,7 @@ const fetchChats = async (req, res) => {
 
 const createGroupChat = async (req, res) => {
   if (!req.body.users || !req.body.chatName) {
-    return res.status(400).send({ message: "Please Fill all the fields " });
+    return res.status(400).send({ message: "Please Fill all the fields." });
   }
 
   //   res.send(req.body.users);
@@ -189,6 +194,7 @@ const removeFromGroup = async (req, res) => {
     res.json(deletedUser);
   }
 };
+
 module.exports = {
   accessChat,
   fetchChats,
