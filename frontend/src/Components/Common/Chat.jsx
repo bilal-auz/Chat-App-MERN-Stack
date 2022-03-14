@@ -15,12 +15,16 @@ import UpdateGroupChatModal from "./UpdateGroupChatModal";
 import ScrollableChat from "./ScrollableChat";
 import axios from "axios";
 
+import io from "socket.io-client";
+const ENDPOINT = "http://localhost:5000";
+var socket, selectedChatCompare;
+
 function Chat({ fetchAgain, setFetchAgain }) {
   const { user, selectedChat, setSelectedChat } = ChatState();
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-
+  const [socketConnected, setSocketConnected] = useState(false);
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
       try {
@@ -43,6 +47,12 @@ function Chat({ fetchAgain, setFetchAgain }) {
     }
   };
 
+  useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    socket.on("connection", () => setSocketConnected(true));
+  }, []);
+
   const getMessages = async () => {
     console.log(selectedChat);
     const config = {
@@ -58,16 +68,21 @@ function Chat({ fetchAgain, setFetchAgain }) {
     );
 
     setMessages(getMessages);
+
+    socket.emit("join chat", selectedChat._id);
     // console.log(getMessages);
   };
+
+  useEffect(() => {
+    getMessages();
+
+    selectedChatCompare = selectedChat;
+  }, [selectedChat]);
 
   const typingHandler = async (e) => {
     setNewMessage(e.target.value);
   };
 
-  useEffect(() => {
-    getMessages();
-  }, [selectedChat]);
   return (
     <>
       {selectedChat ? (
